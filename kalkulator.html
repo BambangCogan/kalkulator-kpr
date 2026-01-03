@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kalkulator KPR Mr. Bambang</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
+        h2 { color: #2c3e50; text-align: center; }
+        label { display: block; margin-top: 10px; font-weight: bold; }
+        input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: #27ae60; color: white; border: none; border-radius: 5px; margin-top: 20px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .hasil { margin-top: 20px; padding: 15px; background-color: #e8f6ed; border-radius: 5px; display: none; border-left: 5px solid #27ae60; }
+        .wa-button { background-color: #25d366; text-align: center; display: block; text-decoration: none; color: white; padding: 10px; border-radius: 5px; margin-top: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Kalkulator KPR</h2>
+    
+    <label>Harga Properti (Rp)</label>
+    <input type="number" id="harga" value="800000000">
+
+    <label>Uang Muka / DP (%)</label>
+    <input type="number" id="dp" value="10">
+
+    <label>Bunga Per Tahun (%)</label>
+    <input type="number" id="bunga" value="4.5">
+
+    <label>Tenor (Tahun)</label>
+    <input type="number" id="tenor" value="20">
+
+    <button onclick="hitungKPR()">Hitung Cicilan</button>
+
+    <div id="hasilBox" class="hasil">
+        <p>Pinjaman Pokok: <br><strong id="resPokok"></strong></p>
+        <p>Estimasi Cicilan:</p>
+        <h3 id="resCicilan" style="color: #27ae60; margin: 5px 0;"></h3>
+        <p style="font-size: 12px; color: #666;">*Perhitungan simulasi tetap (flat)</p>
+        <a id="linkWA" href="#" class="wa-button" target="_blank">Tanya Mr. Bambang via WA</a>
+    </div>
+</div>
+
+<script>
+    function hitungKPR() {
+        try {
+            // Ambil data
+            const harga = parseFloat(document.getElementById('harga').value);
+            const dpPersen = parseFloat(document.getElementById('dp').value);
+            const bungaTahunan = parseFloat(document.getElementById('bunga').value);
+            const tenorTahun = parseFloat(document.getElementById('tenor').value);
+
+            // Validasi input
+            if (isNaN(harga) || isNaN(dpPersen) || isNaN(bungaTahunan) || isNaN(tenorTahun)) {
+                alert("Mohon isi semua data dengan angka");
+                return;
+            }
+
+            // Hitung
+            const nilaiDP = harga * (dpPersen / 100);
+            const plafon = harga - nilaiDP;
+            const bungaBulanan = (bungaTahunan / 100) / 12;
+            const jumlahBulan = tenorTahun * 12;
+
+            // Rumus Anuitas
+            const cicilan = (plafon * bungaBulanan) / (1 - Math.pow(1 + bungaBulanan, -jumlahBulan));
+
+            // Tampilkan
+            document.getElementById('hasilBox').style.display = 'block';
+            document.getElementById('resPokok').innerText = "Rp " + Math.round(plafon).toLocaleString('id-ID');
+            document.getElementById('resCicilan').innerText = "Rp " + Math.round(cicilan).toLocaleString('id-ID') + " / bulan";
+            
+            // Siapkan WhatsApp
+            const pesan = `Halo Mr. Bambang, saya sudah mencoba kalkulator KPR Anda.\n\nHarga: Rp ${harga.toLocaleString('id-ID')}\nCicilan: Rp ${Math.round(cicilan).toLocaleString('id-ID')}/bln.\n\nSaya mau tanya lebih lanjut.`;
+            document.getElementById('linkWA').href = "https://wa.me/6281295230269?text=" + encodeURIComponent(pesan);
+
+        } catch (err) {
+            console.error("Ada kesalahan: ", err);
+        }
+    }
+</script>
+
+</body>
+</html>
